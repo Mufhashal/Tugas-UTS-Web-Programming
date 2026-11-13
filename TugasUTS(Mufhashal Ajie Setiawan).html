@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Calculator</title>
+
+  <!-- Bootstrap 5.3 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      font-family: Arial, sans-serif;
+      color: #eef2ff;
+      background: radial-gradient(circle at top left, #263c68 0, #111827 42%, #090e19 100%);
+    }
+
+    .custom-navbar {
+      width: 100%;
+      padding: 13px 0;
+      background: rgba(12, 22, 40, 0.94);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+    }
+
+    .navbar-brand {
+      color: #ffffff !important;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .navbar-brand span {
+      color: #78aaff;
+    }
+
+    .navbar-nav .nav-link {
+      margin-left: 12px;
+      color: #bdc9dc !important;
+      font-size: 14px;
+      transition: color 0.2s ease;
+    }
+
+    .navbar-nav .nav-link:hover {
+      color: #ffffff !important;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 34px 16px;
+    }
+
+    .calculator-card {
+      width: 100%;
+      max-width: 620px;
+      padding: 34px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 22px;
+      background: rgba(24, 34, 54, 0.94);
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.38);
+    }
+
+    .eyebrow {
+      display: inline-block;
+      padding: 6px 12px;
+      margin-bottom: 14px;
+      border-radius: 30px;
+      color: #a9c7ff;
+      background: rgba(74, 133, 255, 0.14);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin-bottom: 8px;
+      font-size: clamp(26px, 5vw, 34px);
+      font-weight: 700;
+    }
+
+    .subtitle {
+      margin-bottom: 28px;
+      color: #aab6ca;
+      font-size: 14px;
+    }
+
+    .form-label {
+      margin-bottom: 8px;
+      color: #dce5f5;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .form-control {
+      min-height: 48px;
+      border: 1px solid #40506b;
+      border-radius: 10px;
+      color: #f8fafc;
+      background: #111b2d;
+    }
+
+    .form-control:focus {
+      border-color: #70a5ff;
+      color: #fff;
+      background: #111b2d;
+      box-shadow: 0 0 0 3px rgba(80, 145, 255, 0.18);
+    }
+
+    .form-control::placeholder {
+      color: #71809a;
+    }
+
+    .operation-title {
+      margin: 24px 0 12px;
+      color: #dce5f5;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .operation-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .operation-option {
+      position: relative;
+    }
+
+    .operation-option input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .operation-option label {
+      display: flex;
+      min-height: 58px;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #40506b;
+      border-radius: 12px;
+      color: #dce5f5;
+      background: #111b2d;
+      font-size: 24px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .operation-option input:checked + label {
+      border-color: #76a8ff;
+      color: #fff;
+      background: #2867d8;
+      box-shadow: 0 6px 18px rgba(40, 103, 216, 0.25);
+    }
+
+    .operation-option label:hover {
+      border-color: #76a8ff;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .btn {
+      min-height: 46px;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+
+    .btn-calculate {
+      flex: 1;
+      border: 0;
+      color: #fff;
+      background: #3478ed;
+    }
+
+    .btn-calculate:hover {
+      color: #fff;
+      background: #2465d2;
+    }
+
+    .btn-reset {
+      padding-inline: 22px;
+      border: 1px solid #52617a;
+      color: #dce5f5;
+      background: transparent;
+    }
+
+    .btn-reset:hover {
+      border-color: #8fa4c5;
+      color: #fff;
+      background: #263650;
+    }
+
+    .result-panel {
+      margin-top: 24px;
+      padding: 20px;
+      border: 1px solid rgba(118, 168, 255, 0.25);
+      border-radius: 14px;
+      background: rgba(52, 120, 237, 0.10);
+    }
+
+    .result-caption {
+      margin-bottom: 6px;
+      color: #aabde0;
+      font-size: 13px;
+    }
+
+    .result-value {
+      overflow-wrap: anywhere;
+      color: #ffffff;
+      font-size: clamp(25px, 5vw, 34px);
+      font-weight: 700;
+    }
+
+    .message {
+      min-height: 20px;
+      margin: 12px 0 0;
+      color: #ffb4b4;
+      font-size: 13px;
+    }
+
+    footer {
+      padding: 16px 12px;
+      color: #8190a8;
+      background: rgba(12, 22, 40, 0.80);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 12px;
+      text-align: center;
+    }
+
+    @media (max-width: 480px) {
+      .calculator-card {
+        padding: 24px 18px;
+      }
+
+      .operation-grid {
+        gap: 7px;
+      }
+
+      .operation-option label {
+        min-height: 52px;
+      }
+
+      .navbar-nav .nav-link {
+        margin-left: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark custom-navbar">
+    <div class="container">
+      <a class="navbar-brand" href="#home">Smart<span>Calc</span></a>
+
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#mainNavbar"
+        aria-controls="mainNavbar"
+        aria-expanded="false"
+        aria-label="Buka navigasi"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse justify-content-end" id="mainNavbar">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="#home">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#about">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#contact">Contact</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Calculator -->
+  <main id="home">
+    <section class="calculator-card" aria-labelledby="pageTitle">
+      <div class="eyebrow">Web Programming • UTS</div>
+      <h1 id="pageTitle">Smart Calculator</h1>
+      <p class="subtitle">Kalkulator sederhana untuk melakukan operasi matematika.</p>
+
+      <form id="calculatorForm">
+        <div class="row g-3">
+          <div class="col-sm-6">
+            <label for="number1" class="form-label">Angka pertama</label>
+            <input
+              type="number"
+              class="form-control"
+              id="number1"
+              placeholder="Contoh: 25"
+              step="any"
+            >
+          </div>
+
+          <div class="col-sm-6">
+            <label for="number2" class="form-label">Angka kedua</label>
+            <input
+              type="number"
+              class="form-control"
+              id="number2"
+              placeholder="Contoh: 5"
+              step="any"
+            >
+          </div>
+        </div>
+
+        <p class="operation-title">Pilih operasi matematika</p>
+
+        <div class="operation-grid">
+          <div class="operation-option">
+            <input type="radio" name="operation" id="add" value="add" checked>
+            <label for="add" aria-label="Penjumlahan">+</label>
+          </div>
+
+          <div class="operation-option">
+            <input type="radio" name="operation" id="subtract" value="subtract">
+            <label for="subtract" aria-label="Pengurangan">−</label>
+          </div>
+
+          <div class="operation-option">
+            <input type="radio" name="operation" id="multiply" value="multiply">
+            <label for="multiply" aria-label="Perkalian">×</label>
+          </div>
+
+          <div class="operation-option">
+            <input type="radio" name="operation" id="divide" value="divide">
+            <label for="divide" aria-label="Pembagian">÷</label>
+          </div>
+        </div>
+
+        <div class="button-row">
+          <button type="submit" class="btn btn-calculate">Hitung Hasil</button>
+          <button type="reset" class="btn btn-reset" id="resetButton">Reset</button>
+        </div>
+      </form>
+
+      <section class="result-panel" aria-live="polite">
+        <div class="result-caption">Hasil perhitungan</div>
+        <div class="result-value" id="result">—</div>
+        <p class="message" id="message"></p>
+      </section>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer id="contact">
+    <div id="about">Smart Calculator · Dibuat dengan HTML, CSS, JavaScript, dan Bootstrap</div>
+    <div>© 2026 SmartCalc. All Rights Reserved.</div>
+  </footer>
+
+  <!-- Bootstrap JavaScript untuk menu navbar versi mobile -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    const calculatorForm = document.getElementById("calculatorForm");
+    const number1Input = document.getElementById("number1");
+    const number2Input = document.getElementById("number2");
+    const resultElement = document.getElementById("result");
+    const messageElement = document.getElementById("message");
+    const resetButton = document.getElementById("resetButton");
+
+    calculatorForm.addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      const firstNumber = parseFloat(number1Input.value);
+      const secondNumber = parseFloat(number2Input.value);
+      const selectedOperation = document.querySelector('input[name="operation"]:checked').value;
+
+      messageElement.textContent = "";
+
+      if (number1Input.value.trim() === "" || number2Input.value.trim() === "") {
+        resultElement.textContent = "—";
+        messageElement.textContent = "Silakan isi kedua angka terlebih dahulu.";
+        return;
+      }
+
+      let calculationResult;
+
+      switch (selectedOperation) {
+        case "add":
+          calculationResult = firstNumber + secondNumber;
+          break;
+
+        case "subtract":
+          calculationResult = firstNumber - secondNumber;
+          break;
+
+        case "multiply":
+          calculationResult = firstNumber * secondNumber;
+          break;
+
+        case "divide":
+          if (secondNumber === 0) {
+            resultElement.textContent = "—";
+            messageElement.textContent = "Pembagian dengan angka nol tidak diperbolehkan.";
+            return;
+          }
+          calculationResult = firstNumber / secondNumber;
+          break;
+
+        default:
+          resultElement.textContent = "—";
+          messageElement.textContent = "Operasi matematika tidak valid.";
+          return;
+      }
+
+      resultElement.textContent = Number(calculationResult.toFixed(8)).toString();
+    });
+
+    resetButton.addEventListener("click", function() {
+      resultElement.textContent = "—";
+      messageElement.textContent = "";
+    });
+  </script>
+</body>
+</html>
